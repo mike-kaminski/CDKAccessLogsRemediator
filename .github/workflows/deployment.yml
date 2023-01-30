@@ -1,4 +1,4 @@
-name: Embark Access Logs Deployment
+name: Access Logs Deployment
 on:
   workflow_dispatch:
   push:
@@ -18,13 +18,13 @@ jobs:
         environment: [dev, preprod, prod]
         include:
           - environment: dev
-            assume_role: arn:aws:iam::763216446258:role/githubActionsOidc
+            assume_role: arn:aws:iam::123456789100:role/githubActionsOidc
             region: us-east-1
           - environment: preprod
-            assume_role: arn:aws:iam::359006562871:role/githubActionsOidc
+            assume_role: arn:aws:iam::123456789101:role/githubActionsOidc
             region: us-east-1
           - environment: prod
-            assume_role: arn:aws:iam::074763112859:role/githubActionsOidc
+            assume_role: arn:aws:iam::123456789102:role/githubActionsOidc
             region: us-east-1
     defaults:
       run:

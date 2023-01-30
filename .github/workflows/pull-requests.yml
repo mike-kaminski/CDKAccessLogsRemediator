@@ -1,4 +1,4 @@
-name: Embark Access Logs PR Check
+name: Access Logs PR Check
 on:
   pull_request:
     types:
@@ -21,7 +21,7 @@ jobs:
         environment: [dev]
         include:
           - environment: dev
-            assume_role: arn:aws:iam::763216446258:role/githubActionsOidc
+            assume_role: arn:aws:iam::123456789100:role/githubActionsOidc
             region: us-east-1
     defaults:
       run:
