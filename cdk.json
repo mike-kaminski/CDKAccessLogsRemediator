@@ -1,0 +1,49 @@
+{
+  "app": "npx ts-node --prefer-ts-exts Main.ts",
+  "watch": {
+    "include": ["**"],
+    "exclude": [
+      "README.md",
+      "cdk*.json",
+      "**/*.d.ts",
+      "**/*.js",
+      "tsconfig.json",
+      "package*.json",
+      "yarn.lock",
+      "node_modules",
+      "test"
+    ]
+  },
+  "context": {
+    "dev": {
+      "Product": "AccessLogs",
+      "AWSAccountID": "123456789100",
+      "AWSRegion": "us-east-1",
+      "Environment": "Dev",
+      "Version": "v1.0.0",
+      "Team": "WebPlatform",
+      "ElbAccountId": "127311923021",
+      "LogRetentionDays": 30
+    },
+    "preprod": {
+      "Product": "AccessLogs",
+      "AWSAccountID": "123456789101",
+      "AWSRegion": "us-east-1",
+      "Environment": "Staging",
+      "Version": "v1.0.0",
+      "Team": "WebPlatform",
+      "ElbAccountId": "127311923021",
+      "LogRetentionDays": 30
+    },
+    "prod": {
+      "Product": "AccessLogs",
+      "AWSAccountID": "123456789102",
+      "AWSRegion": "us-east-1",
+      "Environment": "Prod",
+      "Version": "v1.0.0",
+      "Team": "WebPlatform",
+      "ElbAccountId": "127311923021",
+      "LogRetentionDays": 90
+    }
+  }
+}

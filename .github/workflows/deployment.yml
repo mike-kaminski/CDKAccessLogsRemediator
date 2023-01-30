@@ -1,0 +1,77 @@
+name: Embark Access Logs Deployment
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+permissions:
+  id-token: write
+  contents: write
+  deployments: write
+jobs:
+  deploy:
+    name: deploy ${{ matrix.environment }}
+    runs-on: ubuntu-latest
+    strategy:
+      max-parallel: 1
+      matrix:
+        environment: [dev, preprod, prod]
+        include:
+          - environment: dev
+            assume_role: arn:aws:iam::763216446258:role/githubActionsOidc
+            region: us-east-1
+          - environment: preprod
+            assume_role: arn:aws:iam::359006562871:role/githubActionsOidc
+            region: us-east-1
+          - environment: prod
+            assume_role: arn:aws:iam::074763112859:role/githubActionsOidc
+            region: us-east-1
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        id: checkout
+      - name: Set up node
+        uses: actions/setup-node@v3
+        id: set-node
+        with:
+          node-version: 16
+          check-latest: true
+      - name: Configure credentials
+        id: aws-creds
+        uses: aws-actions/configure-aws-credentials@master
+        with:
+          role-to-assume: ${{ matrix.assume_role }}
+          role-duration-seconds: 1200
+          aws-region: ${{ matrix.region }}
+      - name: Install dependencies
+        id: npm-i
+        run: npm install
+      - name: Create GitHub deployment
+        uses: chrnorm/deployment-action@v2.0.5
+        id: deployment
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          environment: ${{ matrix.environment }}
+      - name: Run deployment
+        id: deploy
+        run: |
+          npx cdk deploy "*" -c config=$ENVIRONMENT --require-approval never
+        env:
+          ENVIRONMENT: ${{ matrix.environment }}
+      - name: Update deployment status (success)
+        if: success()
+        uses: chrnorm/deployment-status@v2.0.1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          state: success
+          deployment-id: ${{ steps.deployment.outputs.deployment_id }}
+      - name: Update deployment status (failure)
+        if: failure()
+        uses: chrnorm/deployment-status@v2.0.1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          state: failure
+          deployment-id: ${{ steps.deployment.outputs.deployment_id }}
